@@ -15,9 +15,14 @@ class Worker:
         self.moving_start_time = None
         self.moving_target = None
 
+        self.last_movement_was_left = False
+
         self.basic_payment = 1
         self.basic_speed = 70
         self.can_automove = True
+
+    def get_picture(self):
+        return None
 
     def get_payment(self, state):
         return self.basic_payment
@@ -40,6 +45,8 @@ class Worker:
         dx = self.moving_target[0] - self.moving_start_pos[0]
         dy = self.moving_target[1] - self.moving_start_pos[1]
         if dx != 0 or dy != 0:
+            self.last_movement_was_left = (dx < 0)
+
             d = math.sqrt( dx*dx + dy*dy )
 
             multiplier = self.get_speed_multiplier(state)

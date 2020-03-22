@@ -74,10 +74,7 @@ def draw_current_screen(state):
         # draw player
         for house in state.player.pending_houses:
             draw_image(pic_dom, position=house)
-        if state.player.has_cargo:
-            draw_image(pic_riksarorange, position=state.player.position)
-        else:
-            draw_image(pic_riksarempty, position=state.player.position)
+        draw_image(state.player.get_picture(), position=state.player.position, scale_x=-1 if state.player.last_movement_was_left else 1)
     else:
         # draw interns' and vans' houses
         intern_opacity = van_opacity = airplane_opacity = 1
@@ -99,14 +96,11 @@ def draw_current_screen(state):
 
         # draw interns and vans
         for worker in state.interns:
-            if worker.has_cargo:
-                draw_image(pic_riksarorange, position=worker.position, opacity=intern_opacity)
-            else:
-                draw_image(pic_riksarempty, position=worker.position, opacity=intern_opacity)
+            draw_image(worker.get_picture(), position=worker.position, opacity=intern_opacity, scale_x=-1 if worker.last_movement_was_left else 1)
         for worker in state.vans:
-            draw_image(pic_van, position=worker.position, opacity=van_opacity)
+            draw_image(worker.get_picture(), position=worker.position, opacity=van_opacity, scale_x=-1 if worker.last_movement_was_left else 1)
         for worker in state.airplanes:
-            draw_image(pic_lietadlo, position=worker.position, opacity=airplane_opacity)
+            draw_image(worker.get_picture(), position=worker.position, opacity=airplane_opacity, scale_x=-1 if worker.last_movement_was_left else 1)
 
     status_message(state.current_status_message)
     current_time = time.time()

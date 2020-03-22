@@ -1,4 +1,5 @@
 from constants import *
+from resources import *
 from worker import Worker
 
 class Van(Worker):
@@ -9,4 +10,7 @@ class Van(Worker):
 
     def get_houses_per_run(self, state):
         return 3 + state.item_counts[STAGE_PACKING]
+
+    def get_picture(self):
+        return pic_van
 

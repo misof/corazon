@@ -1,4 +1,5 @@
 from constants import *
+from resources import *
 from worker import Worker
 
 class Airplane(Worker):
@@ -12,4 +13,7 @@ class Airplane(Worker):
 
     def get_payment(self, state):
         return self.basic_payment * (1 + 9 * state.item_counts[STAGE_SHRINK])
+
+    def get_picture(self):
+        return pic_lietadlo
 
