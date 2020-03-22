@@ -1,3 +1,6 @@
+# local patches by misof:
+# - MouseDragEvent
+
 def degrees(d):
     """Convert degrees to radians.
 
@@ -154,6 +157,23 @@ class MouseMoveEvent:
         self.dx = dx
         self.dy = dy
 
+class MouseDragEvent:
+    """Happens when user drags the mouse.
+
+    Fields:
+    x  -- The current X coordinate of the mouse.
+    y  -- The current Y coordinate of the mouse.
+    dx -- Difference from the previous X coordinate.
+    dy -- Difference from the previous Y coordinate.
+    """
+    def __init__(self, x, y, dx, dy, buttons, modifiers):
+        self.x = x
+        self.y = y
+        self.dx = dx
+        self.dy = dy
+        self.buttons = buttons
+        self.modifiers = modifiers
+
 class MouseDownEvent:
     """Happens when user presses a mouse button.
 
@@ -251,6 +271,11 @@ def open_window(title, width, height, fps=60):
     def on_mouse_motion(x, y, dx, dy):
         global _ctx
         _ctx._events.append(MouseMoveEvent(x, y, dx, dy))
+
+    @_ctx._win.event
+    def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
+        global _ctx
+        _ctx._events.append(MouseDragEvent(x, y, dx, dy, buttons, modifiers))
 
     @_ctx._win.event
     def on_mouse_press(x, y, symbol, modifiers):
