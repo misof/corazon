@@ -100,7 +100,11 @@ class Worker:
     def deliver_goods(self, state, current_time):
         if self.pending_houses != [] and self.has_cargo == True:
             if square_distance( self.pending_houses[-1], self.position ) <= 300:
-                state.money += self.get_payment(state)
+                payment = self.get_payment(state)
+                if state.item_counts[STAGE_MASSIVE_ADS]: payment *= 10
+                if state.item_counts[STAGE_HUMUNGOUS_ADS]: payment *= 10
+                state.money += payment
+
                 self.pending_houses.pop()
                 if self.pending_houses == []:
                     self.has_cargo = False

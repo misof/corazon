@@ -14,20 +14,26 @@ STAGES = []
 STAGES.append( Stage(0, 0, None, 0, 0, False, None) )
 STAGES.append( Stage(8, 8, 'naolejuj rikšu', 0, 1, False, 'Máš dosť peňazí na to, aby si naolejoval(a) rikši prevody.') )
 STAGES.append( Stage(12, 9, 'lepšie prevody', 0, 1, False, 'Prenajmi si rikšu s lepšou prehadzovačkou.') )
-STAGES.append( Stage(20, 12, 'väčší vozík', 0, 3, True, 'S väčším vozíkom vieš doručiť viac tovaru.') )
-STAGES.append( Stage(100, 30, 'brigádnik', 1, 20, True, 'Zaplať brigádnika, čo bude šľapať namiesto teba.') )
+STAGES.append( Stage(20, 12, 'väčší vozík', 0, 3, False, 'S väčším vozíkom vieš doručiť viac tovaru.') )
+STAGES.append( Stage(100, 30, 'brigádnik', 0, 20, True, 'Zaplať brigádnika, čo bude šľapať namiesto teba.') )
 STAGES.append( Stage(250, 120, 'reklamné letáky', 0, 10, False, 'Letáková kampaň pritiahne viac zákazníkov.') )
-STAGES.append( Stage(10**15, 500, 'sterilný office', 0, 1, True, 'V sterilnom office si netreba dezinfikovať ruky.') )
-STAGES.append( Stage(4000, 600, 'motorikše', 0, 1, True, 'Prenajmi rikše s motorom.') )
+STAGES.append( Stage(10**15, 500, 'sterilný office', 0, 1, True, 'TVOJ SEN: v sterilnom office si netreba dezinfikovať ruky!') )
+STAGES.append( Stage(4000, 1000, 'motorikše', 0, 1, False, 'Vybav rikše pomocným motorom.') )
 STAGES.append( Stage(10000, 3000, 'dodávka', 0, 50, True, 'Investuj do svojej prvej dodávky.') )
-STAGES.append( Stage(18000, 9000, 'logistika', 0, 1, False, 'Logistické centrum efektívnejšie plánuje rozvoz.') )
-STAGES.append( Stage(22000, 11000, 'lepšie balenie', 0, 3, False, 'Vďaka úspornejšiemu baleniu obslúžime viac klientov.') )
+STAGES.append( Stage(18000, 9000, 'logistika', 0, 1, False, 'Logistické centrum naplánuje optimálnu cestu pre rozvoz.') )
+STAGES.append( Stage(22000, 11000, 'lepšie balenie', 0, 3, False, 'Vďaka úspornejšiemu baleniu obslúžime viac klientov jednou jazdou.') )
 STAGES.append( Stage(120000, 30000, 'airdrop', 0, 20, True, 'Zhadzuj tovar z lietadla.') )
-STAGES.append( Stage(450000, 90000, 'palivové nádrže', 0, 5, True, 'Udrž lietadlá dlhšie vo vzduchu.') )
+STAGES.append( Stage(450000, 95000, 'palivové nádrže', 0, 5, False, 'Udrž lietadlá dlhšie vo vzduchu.') )
 STAGES.append( Stage(15 * 10**6, 500000, 'klonovanie', 0, 1, False, 'Preži aj smrť vďaka klonovacím technológiám.') )
 STAGES.append( Stage(30 * 10**6, 14 * 10**6, 'miniaturizácia', 0, 1, False, 'Miniaturizovaného tovaru sa dá doručiť viac.') )
-STAGES.append( Stage(25 * 10**7, 25 * 10**6, 'teleporty', 0, 1, False, 'Teleportuj tovar ľuďom do domov.') )
-STAGES.append( Stage(10**10, 10**9, 'replikátory', 0, 1, False, 'Vyrábaj tovar priamo u ľudí doma.') )
+STAGES.append( Stage(25 * 10**7, 25 * 10**6, 'teleport', 0, 7, True, 'Teleportuj tovar ľuďom do domov.') )
+STAGES.append( Stage(10**9, 2 * 10**8, 'zrýchli teleport', 0, 5, False, '') )
+STAGES.append( Stage(10**9, 2 * 10**8, 'zväčši teleport', 0, 5, False, 'Investuj do zrýchlenia alebo zväčšenia teleportačnej technológie.') )
+STAGES.append( Stage(33 * 10**9, 3 * 10**9, 'masívna reklama', 0, 1, False, 'Každý musí vidieť našu reklamu!') )
+STAGES.append( Stage(333 * 10**9, 77 * 10**9, 'replikátor', 0, 7, True, 'Vyrábaj tovar priamo u ľudí doma.') )
+STAGES.append( Stage(4 * 10**12, 10**12, 'zväčši replikátor', 0, 7, False, '') )
+STAGES.append( Stage(6 * 10**12, 10**12, 'zrýchli replikátor', 0, 3, False, 'Investuj do zväčšenia alebo zrýchlenia replikačnej technológie.') )
+STAGES.append( Stage(97 * 10**12, 12 * 10**12, 'reklama do hlavy', 0, 1, False, 'Vysielaj reklamu priamo do hláv zákazníkov.') )
 
 STAGE_OIL = 1
 STAGE_GEARS = 2
@@ -44,7 +50,15 @@ STAGE_FUELTANK = 12
 STAGE_CLONE = 13
 STAGE_SHRINK = 14
 STAGE_TELEPORT = 15
-STAGE_REPLICATOR = 16
+STAGE_FASTER_TELEPORT = 16
+STAGE_BIGGER_TELEPORT = 17
+STAGE_MASSIVE_ADS = 18
+STAGE_REPLICATOR = 19
+STAGE_BIGGER_REPLICATOR = 20
+STAGE_FASTER_REPLICATOR = 21
+STAGE_HUMUNGOUS_ADS = 22
+
+FINGERPRINT = [ STAGE_INTERN, STAGE_STERILE, STAGE_VAN, STAGE_AIRDROP, STAGE_TELEPORT, STAGE_REPLICATOR ]
 
 MENU_NEW_GAME = 1
 MENU_CONTINUE_GAME = 2

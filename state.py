@@ -5,7 +5,7 @@ from player import Player
 class State:
     def __init__(self):
         self.stage = 0
-        self.money = 1000
+        self.money = STAGES[STAGE_STERILE].cost * 2
         self.item_counts = [ 0 for _ in range(len(STAGES)) ]
 
         self.current_status_message = ''
@@ -17,11 +17,13 @@ class State:
         self.interns = []
         self.vans = []
         self.airplanes = []
+        self.teleports = []
+        self.replicators = []
 
         self.saved_clone = None
 
     def get_all_workers(self):
-        return self.interns + self.vans + self.airplanes
+        return self.interns + self.vans + self.airplanes + self.teleports + self.replicators
 
     def is_player_active(self):
         return len(self.get_all_workers()) == 0

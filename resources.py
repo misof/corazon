@@ -14,4 +14,6 @@ pic_riksa_kapusta = load_image('resources/riksa_kapusta.png')
 pic_sklad = load_image('resources/sklad.png')
 pic_van = load_image('resources/van.png')
 pic_veziak = load_image('resources/veziak.png')
+pic_win = load_image('resources/win.png')
+pic_win_pro = load_image('resources/win_pro.png')
 

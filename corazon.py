@@ -1,4 +1,4 @@
-import math, pickle, random, sys, time
+import hashlib, math, pickle, random, sys, time
 from easygame import *
 from constants import *
 from helper_functions import *
@@ -7,6 +7,8 @@ from state import State
 from interns import Intern
 from vans import Van
 from airplanes import Airplane
+from teleports import Teleport
+from replicators import Replicator
 from player import Player
 
 def main_menu():
@@ -45,7 +47,9 @@ def add_money_textbox(state):
     bgcolor = (0.9, 0.9, 0.9, 1)
     txcolor = (0, 0, 0, 1)
     draw_polygon( (200, SCREENY-34), (SCREENX-200, SCREENY-34), (SCREENX-200,SCREENY-10), (200,SCREENY-10), color=bgcolor )
-    draw_text('Peniaze: €{}'.format(state.money), 'Arial', 16, position=(204, SCREENY-30), color=txcolor )
+    peniaze_message = 'Peniaze: €{}'.format(state.money)
+    if state.money >= 10**6: peniaze_message += ' (€{})'.format(formatuj_cislo(state.money, force=True))
+    draw_text(peniaze_message, 'Arial', 16, position=(204, SCREENY-30), color=txcolor )
 
 def add_disinfection_button(urgent=False):
     bgcolor = (0.9, 0.9, 0.9, 1)
@@ -67,7 +71,7 @@ def draw_button(label, offx, offy, enabled, width=24, font_size=16):
     draw_text(label, 'Arial', font_size, position=(offx+6, offy-20), color=txcolor )
 
 def draw_current_screen(state):
-    draw_image(pic_background, position=(0, 0), anchor=(0, 0))
+    draw_image(pic_background, position=(0, 0), anchor=(0, 0), scale_x=1.01, scale_y=1.01)
     draw_image(pic_sklad, position=WAREHOUSE_POS)
 
     if state.is_player_active():
@@ -76,13 +80,22 @@ def draw_current_screen(state):
             draw_image(pic_dom, position=house)
         draw_image(state.player.get_picture(), position=state.player.position, scale_x=-1 if state.player.last_movement_was_left else 1)
     else:
-        # draw interns' and vans' houses
-        intern_opacity = van_opacity = airplane_opacity = 1
+        # draw workers' houses
+        intern_opacity = van_opacity = airplane_opacity = teleport_opacity = replicator_opacity = 1
         if state.vans != []:
             intern_opacity = 0.2
         if state.airplanes != []:
             van_opacity = 0.07
-            intern_opacity = 0.03
+            intern_opacity = 0.15
+        if state.teleports != []:
+            van_opacity = 0.07
+            intern_opacity = 0.15
+            airplane_opacity = 0.15
+        if state.replicators != []:
+            van_opacity = 0.07
+            intern_opacity = 0.15
+            airplane_opacity = 0.15
+            teleport_opacity = 0.5
 
         for worker in state.interns:
             for house in worker.pending_houses:
@@ -93,14 +106,35 @@ def draw_current_screen(state):
         for worker in state.airplanes:
             for house in worker.pending_houses:
                 draw_image( pic_mesto, position=house, opacity=airplane_opacity )
+        for worker in state.teleports:
+            for house in worker.pending_houses:
+                draw_image( pic_mesto, position=house, opacity=1 if teleport_opacity==1 else 0.15 )
+        for worker in state.replicators:
+            for house in worker.pending_houses:
+                draw_image( pic_mesto, position=house, opacity=replicator_opacity )
 
-        # draw interns and vans
+        # draw interns, vans, airplanes
         for worker in state.interns:
             draw_image(worker.get_picture(), position=worker.position, opacity=intern_opacity, scale_x=-1 if worker.last_movement_was_left else 1)
         for worker in state.vans:
             draw_image(worker.get_picture(), position=worker.position, opacity=van_opacity, scale_x=-1 if worker.last_movement_was_left else 1)
         for worker in state.airplanes:
             draw_image(worker.get_picture(), position=worker.position, opacity=airplane_opacity, scale_x=-1 if worker.last_movement_was_left else 1)
+
+        # draw teleports
+        for worker in state.teleports:
+            if worker.has_cargo:
+                draw_circle( WAREHOUSE_POS, radius=32, color=(1, 1, 0.5, 0.9*teleport_opacity) )
+                draw_circle( worker.pending_houses[-1], radius=32, color=(1, 1, 0.5, 0.9*teleport_opacity) )
+                draw_line( WAREHOUSE_POS, worker.pending_houses[-1], thickness=47, color=(1, 1, 0.5, 0.7*teleport_opacity) )
+
+        # draw replicators
+        for worker in state.replicators:
+            if worker.has_cargo:
+                dfull = math.sqrt( square_distance( WAREHOUSE_POS, worker.pending_houses[-1] ) )
+                dpart = math.sqrt( square_distance( worker.position, worker.pending_houses[-1] ) )
+                radius = int( 0.5 + 60 * dpart / dfull )
+                draw_circle( worker.pending_houses[-1], radius=radius, color=(1, 0.3, 1, 0.7*replicator_opacity) )
 
     status_message(state.current_status_message)
     current_time = time.time()
@@ -128,18 +162,45 @@ def draw_current_screen(state):
         else:
             draw_button('prepíš klon (€10M)', 10, 60, state.money >= 10**7, 179, 12)
 
+def win_pro(state):
+    if state.is_player_active():
+        verification_string = '_'.join( str(state.item_counts[s]) for s in FINGERPRINT)
+        verification_string = hashlib.sha256(verification_string.encode()).hexdigest()
+        while True:
+            next_frame()
+            draw_image(pic_win_pro, position=(0, 0), anchor=(0, 0) )
+            draw_text('verifikačný reťazec:', 'Arial', 16, position=(10,30), color=(0,0,0,1) )
+            draw_text(verification_string, 'Arial', 12, position=(10,10), color=(0,0,0,1) )
+            for event in poll_events():
+                if type(event) is CloseEvent:
+                    terminate()
+                if type(event) is KeyDownEvent:
+                    return
+
+def win(state):
+    while True:
+        next_frame()
+        draw_image(pic_win, position=(0, 0), anchor=(0, 0) )
+        for event in poll_events():
+            if type(event) is CloseEvent:
+                terminate()
+            if type(event) is KeyDownEvent:
+                win_pro(state)
+                return
+
 def game_over(state):
     while True:
         next_frame()
         state.current_status_message = ''
         draw_current_screen(state)
-        draw_text('YOU LOSE', 'Arial', 100, position=(50, SCREENY//2), color=(1,0,0,1))
+        draw_polygon( (0,0), (SCREENX-1,0), (SCREENX-1,SCREENY-1), (0,SCREENY-1), color=(1,1,1,0.8) )
+        draw_text('PREHRAL(A) SI', 'Arial', 60, position=(50, SCREENY//2), color=(1,0,0,1))
         draw_text('Nakazil(a) si sa :(', 'Arial', 60, position=(50, SCREENY//2 - 90), color=(1,0,0,1))
         if state.saved_clone is None:
-            draw_text('Press any key...', 'Arial', 20, position=(450, 40), color=(1,0,0,1))
+            draw_text('Stlač klávesu...', 'Arial', 20, position=(450, 40), color=(1,0,0,1))
         else:
             draw_text('Našťastie tvoj klon ťa nahradí!', 'Arial', 32, position=(50, SCREENY//2 - 140), color=(0,1,0,1))
-            draw_text('Press any key...', 'Arial', 20, position=(450, 40), color=(0,1,0,1))
+            draw_text('Stlač klávesu...', 'Arial', 20, position=(450, 40), color=(0,1,0,1))
         for event in poll_events():
             if type(event) is CloseEvent:
                 terminate()
@@ -167,6 +228,8 @@ def handle_left_click(state, event, current_time):
         if 10 <= event.x <= 179 and 36 <= event.y <= 60:
             state.money -= 10**7
             state.saved_clone = None
+            state.player.cargo_type = None
+            for worker in state.interns: worker.cargo_type = None
             tmp = pickle.dumps(state)
             state.saved_clone = tmp
     
@@ -184,6 +247,10 @@ def handle_left_click(state, event, current_time):
                     state.vans.pop()
                 if s == STAGE_AIRDROP:
                     state.airplanes.pop()
+                if s == STAGE_TELEPORT:
+                    state.teleports.pop()
+                if s == STAGE_REPLICATOR:
+                    state.replicators.pop()
         if 165 <= event.x <= 189 and offy-24 <= event.y <= offy:
             if state.item_counts[s] < STAGES[s].upper_bound and state.money >= STAGES[s].cost:
                 state.item_counts[s] += 1
@@ -200,6 +267,10 @@ def handle_left_click(state, event, current_time):
                     state.vans.append( Van() )
                 if s == STAGE_AIRDROP:
                     state.airplanes.append( Airplane() )
+                if s == STAGE_TELEPORT:
+                    state.teleports.append( Teleport() )
+                if s == STAGE_REPLICATOR:
+                    state.replicators.append( Replicator() )
 
 def handle_drag(state, event, current_time):
     if state.player.moving and 200 <= event.x <= SCREENX-1 and 25 <= event.y <= SCREENY-35:
@@ -212,6 +283,11 @@ def play():
     while True:
         next_frame()
         current_time = time.time()
+
+        # win
+        if state.item_counts[STAGE_STERILE] > 0:
+            win(state)
+            return
 
         # level up
         for idx, stage in enumerate(STAGES):
