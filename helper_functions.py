@@ -1,4 +1,4 @@
-import itertools, math
+import itertools, math, sys
 from easygame import *
 from constants import *
 
@@ -35,6 +35,6 @@ def optimize_order(seq):
 def stages_in_menu(state):
     candidates = list( range(1, state.stage+1) )
     candidates = [ ( STAGES[c].cost, c ) for c in candidates ]
-    while len(candidates) > 9: candidates.remove( min(candidates) )
+    while len(candidates) > 8: candidates.remove( min(candidates) )
     return [ c[1] for c in candidates ]
 

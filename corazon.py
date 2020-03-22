@@ -1,63 +1,18 @@
-import math, random, sys, time
+import math, pickle, random, sys, time
 from easygame import *
 from constants import *
 from helper_functions import *
+from resources import *
+from state import State
 from interns import Intern
 from vans import Van
 from airplanes import Airplane
 from player import Player
 
-pic_init_screen = load_image('resources/init_screen.png')
-pic_init_screen_nocont = load_image('resources/init_screen_nocont.png')
-pic_instr_screen = load_image('resources/instructions.png')
-pic_background = load_image('resources/background.png')
-pic_sklad = load_image('resources/sklad.png')
-pic_riksarempty = load_image('resources/riksarempty.png')
-pic_riksarorange = load_image('resources/riksarorange.png')
-pic_dom = load_image('resources/dom.png')
-pic_van = load_image('resources/van.png')
-pic_veziak = load_image('resources/veziak.png')
-pic_lietadlo = load_image('resources/lietadlo.png')
-pic_mesto = load_image('resources/mesto.png')
-
-def formatuj_cislo(cislo):
-    sufixy = [ '', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y' ]
-    exponent = 0
-    while exponent+1 < len(sufixy) and cislo % 1000 == 0:
-        cislo //= 1000
-        exponent += 1
-    return str(cislo) + sufixy[exponent]
-
-class GameState:
-    def __init__(self):
-        self.stage = 0
-        self.money = 244990
-        self.item_counts = [ 0 for _ in range(len(STAGES)) ]
-
-        self.current_status_message = 'Vitaj!'
-        self.player = Player()
-
-        self.last_disinfection = 25 + time.time()
-        self.seen_disinfection_button = False
-
-        self.interns = []
-        self.vans = []
-        self.airplanes = []
-
-    def get_all_workers(self):
-        return self.interns + self.vans + self.airplanes
-
-    def is_player_active(self):
-        return len(self.get_all_workers()) == 0
-
-def terminate():
-    close_window()
-    sys.exit()
-
 def main_menu():
     while True:
         next_frame()
-        draw_image(pic_init_screen_nocont, position=(0, 0), anchor=(0, 0))
+        draw_image(pic_init_screen, position=(0, 0), anchor=(0, 0))
         for event in poll_events():
             if type(event) is CloseEvent:
                 terminate()
@@ -65,17 +20,15 @@ def main_menu():
                 if event.button == 'LEFT':
                     if 204 <= event.x <= 598:
                         y = 599 - event.y
-                        if 222 <= y <= 308:
-                            return MENU_NEW_GAME
                         if 343 <= y <= 430:
-                            pass
+                            return MENU_NEW_GAME
                         if 463 <= y <= 549:
                             return MENU_INSTRUCTIONS
 
 def instructions():
     while True:
         next_frame()
-        draw_image(pic_instr_screen, position=(0, 0), anchor=(0, 0))
+        draw_image(pic_instructions, position=(0, 0), anchor=(0, 0))
         for event in poll_events():
             if type(event) is CloseEvent:
                 terminate()
@@ -105,13 +58,13 @@ def add_disinfection_button(urgent=False):
     draw_polygon( (SCREENX-179, SCREENY-33), (SCREENX-11, SCREENY-33), (SCREENX-11,SCREENY-11), (SCREENX-179,SCREENY-11), color=bgcolor )
     draw_text('Dezinfikuj si ruky', 'Arial', 16, position=(SCREENX-176, SCREENY-30), color=txcolor )
 
-def draw_button(label, offx, offy, enabled):
+def draw_button(label, offx, offy, enabled, width=24, font_size=16):
     bgcolor = (0.9, 0.9, 0.9, 1)
     txcolor = (0, 0, 0, 1)
     if not enabled: txcolor = (0.7, 0.7, 0.7, 1)
-    draw_polygon( (offx,offy), (offx+24,offy), (offx+24,offy-24), (offx,offy-24), color = txcolor )
-    draw_polygon( (offx+1,offy+1), (offx+23,offy+1), (offx+23,offy-23), (offx+1,offy-23), color = bgcolor )
-    draw_text(label, 'Arial', 16, position=(offx+6, offy-20), color=txcolor )
+    draw_polygon( (offx,offy), (offx+width,offy), (offx+width,offy-24), (offx,offy-24), color = txcolor )
+    draw_polygon( (offx+1,offy+1), (offx+width-1,offy+1), (offx+width-1,offy-23), (offx+1,offy-23), color = bgcolor )
+    draw_text(label, 'Arial', font_size, position=(offx+6, offy-20), color=txcolor )
 
 def draw_current_screen(state):
     draw_image(pic_background, position=(0, 0), anchor=(0, 0))
@@ -128,8 +81,11 @@ def draw_current_screen(state):
     else:
         # draw interns' and vans' houses
         intern_opacity = van_opacity = airplane_opacity = 1
-        if state.vans != []: intern_opacity = 0.2
-        if state.airplanes != []: van_opacity = intern_opacity = 0.1
+        if state.vans != []:
+            intern_opacity = 0.2
+        if state.airplanes != []:
+            van_opacity = 0.07
+            intern_opacity = 0.03
 
         for worker in state.interns:
             for house in worker.pending_houses:
@@ -172,13 +128,24 @@ def draw_current_screen(state):
         draw_polygon( (36,offy-26), (163,offy-26), (163,offy-50), (36,offy-50), color=bgcolor )
         draw_text( str(state.item_counts[s]), 'Arial', 12, position=(40,offy-44), color=txcolor )
 
-def game_over(state, reason):
+    if state.item_counts[STAGE_CLONE] == 1:
+        if state.saved_clone is None:
+            draw_button('naklonuj sa (€10M)', 10, 60, state.money >= 10**7, 179, 12)
+        else:
+            draw_button('prepíš klon (€10M)', 10, 60, state.money >= 10**7, 179, 12)
+
+def game_over(state):
     while True:
         next_frame()
+        state.current_status_message = ''
         draw_current_screen(state)
         draw_text('YOU LOSE', 'Arial', 100, position=(50, SCREENY//2), color=(1,0,0,1))
-        draw_text(reason, 'Arial', 60, position=(50, SCREENY//2 - 90), color=(1,0,0,1))
-        draw_text('press any key', 'Arial', 20, position=(50, 40), color=(1,0,0,1))
+        draw_text('Nakazil(a) si sa :(', 'Arial', 60, position=(50, SCREENY//2 - 90), color=(1,0,0,1))
+        if state.saved_clone is None:
+            draw_text('Press any key...', 'Arial', 20, position=(450, 40), color=(1,0,0,1))
+        else:
+            draw_text('Našťastie tvoj klon ťa nahradí!', 'Arial', 32, position=(50, SCREENY//2 - 140), color=(0,1,0,1))
+            draw_text('Press any key...', 'Arial', 20, position=(450, 40), color=(0,1,0,1))
         for event in poll_events():
             if type(event) is CloseEvent:
                 terminate()
@@ -191,7 +158,6 @@ def handle_left_click(state, event, current_time):
         if SCREENX-180 <= event.x <= SCREENX-10 and SCREENY-34 <= event.y <= SCREENY-10:
             state.last_disinfection = current_time
             state.seen_disinfection_button = True
-            state.current_status_message = ''
             return
 
     # zaciatok pohybu
@@ -201,6 +167,14 @@ def handle_left_click(state, event, current_time):
         state.player.moving_start_time = current_time
         state.player.moving_target = (event.x, event.y)
         return
+
+    # save game
+    if state.item_counts[STAGE_CLONE] == 1 and state.money >= 10**7:
+        if 10 <= event.x <= 179 and 36 <= event.y <= 60:
+            state.money -= 10**7
+            state.saved_clone = None
+            tmp = pickle.dumps(state)
+            state.saved_clone = tmp
     
     menu = stages_in_menu(state)
     for sid in range(len(menu)):
@@ -240,7 +214,7 @@ def handle_drag(state, event, current_time):
         state.player.moving_target = (event.x, event.y)
 
 def play():
-    state = GameState()
+    state = State()
     while True:
         next_frame()
         current_time = time.time()
@@ -249,17 +223,17 @@ def play():
         for idx, stage in enumerate(STAGES):
             if state.money >= stage.reveal_at and state.stage < idx:
                 state.stage = idx
-                if STAGES[idx].message is not None:
-                    state.current_status_message = STAGES[idx].message
 
-        # potreba dezinfekcie
-        if current_time > state.last_disinfection + DISINF_APPEAR and not state.seen_disinfection_button:
-            state.current_status_message = 'Kliknutím na button vpravo hore si dezinfikuj ruky.'
-        if current_time > state.last_disinfection + DISINF_URGENT and not state.seen_disinfection_button:
-            state.current_status_message = 'Kliknutím na button vpravo hore si dezinfikuj ruky. Rýchlo!'
+        # potreba dezinfekcie a mozna smrt
         if current_time > state.last_disinfection + DISINF_DEAD:
-            game_over(state, 'nakazil(a) si sa')
-            return
+            game_over(state)
+            if state.saved_clone is None:
+                return
+            else:
+                saved_state = pickle.loads(state.saved_clone)
+                state = saved_state
+                current_time = time.time()
+                state.last_disinfection = current_time
 
         # automaticky pohyb internov a vanov
         for worker in state.get_all_workers():
@@ -270,6 +244,9 @@ def play():
         if state.is_player_active():
             state.player.process_all_events(state, current_time)
             state.player.move(state)
+
+        # update status_message
+        state.update_status_message()
             
         # vykreslenie obrazovky
         draw_current_screen(state)
