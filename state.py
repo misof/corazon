@@ -5,7 +5,7 @@ from player import Player
 class State:
     def __init__(self):
         self.stage = 0
-        self.money = 10**12
+        self.money = 0
         self.item_counts = [ 0 for _ in range(len(STAGES)) ]
 
         self.current_status_message = ''
@@ -20,6 +20,7 @@ class State:
         self.teleports = []
         self.replicators = []
 
+        self.already_had_enough = False
         self.saw_fake_easter_egg = False
         self.should_win_pro = False
 

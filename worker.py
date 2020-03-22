@@ -103,7 +103,7 @@ class Worker:
                 payment = self.get_payment(state)
                 if state.item_counts[STAGE_MASSIVE_ADS]: payment *= 10
                 if state.item_counts[STAGE_HUMUNGOUS_ADS]: payment *= 10
-                if state.money < STAGES[STAGE_STERILE].cost and state.money + payment >= STAGES[STAGE_STERILE].cost and state.is_player_active():
+                if state.money < STAGES[STAGE_STERILE].cost and state.money + payment >= STAGES[STAGE_STERILE].cost and state.is_player_active() and not state.already_had_enough:
                     state.should_win_pro = True
                 state.money += payment
 

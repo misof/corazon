@@ -163,7 +163,7 @@ def draw_current_screen(state):
             draw_button('prepíš klon (€10M)', 10, 60, state.money >= 10**7, 179, 12)
 
 def win_pro(state):
-    if state.should_win_pro():
+    if state.should_win_pro:
         verification_string = '_'.join( str(state.item_counts[s]) for s in FINGERPRINT)
         verification_string = hashlib.sha256(verification_string.encode()).hexdigest()
         while True:
@@ -247,6 +247,7 @@ def handle_left_click(state, event, current_time):
             if state.item_counts[s] > STAGES[s].lower_bound and STAGES[s].can_sell:
                 state.item_counts[s] -= 1
                 state.money += STAGES[s].cost // 2
+                if state.money >= STAGES[STAGE_STERILE].cost: state.already_had_enough = True
                 if s == STAGE_INTERN:
                     state.interns.pop()
                 if s == STAGE_VAN:
