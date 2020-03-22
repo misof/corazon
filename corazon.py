@@ -163,7 +163,7 @@ def draw_current_screen(state):
             draw_button('prepíš klon (€10M)', 10, 60, state.money >= 10**7, 179, 12)
 
 def win_pro(state):
-    if state.is_player_active():
+    if state.should_win_pro():
         verification_string = '_'.join( str(state.item_counts[s]) for s in FINGERPRINT)
         verification_string = hashlib.sha256(verification_string.encode()).hexdigest()
         while True:
@@ -188,19 +188,25 @@ def win(state):
                 win_pro(state)
                 return
 
+def win_fake(state):
+    while True:
+        next_frame()
+        draw_image(pic_win_fake, position=(0, 0), anchor=(0, 0) )
+        for event in poll_events():
+            if type(event) is CloseEvent:
+                terminate()
+            if type(event) is KeyDownEvent:
+                return
+
 def game_over(state):
     while True:
         next_frame()
         state.current_status_message = ''
         draw_current_screen(state)
-        draw_polygon( (0,0), (SCREENX-1,0), (SCREENX-1,SCREENY-1), (0,SCREENY-1), color=(1,1,1,0.8) )
-        draw_text('PREHRAL(A) SI', 'Arial', 60, position=(50, SCREENY//2), color=(1,0,0,1))
-        draw_text('Nakazil(a) si sa :(', 'Arial', 60, position=(50, SCREENY//2 - 90), color=(1,0,0,1))
         if state.saved_clone is None:
-            draw_text('Stlač klávesu...', 'Arial', 20, position=(450, 40), color=(1,0,0,1))
+            draw_image(pic_loss, position=(0, 0), anchor=(0, 0) )
         else:
-            draw_text('Našťastie tvoj klon ťa nahradí!', 'Arial', 32, position=(50, SCREENY//2 - 140), color=(0,1,0,1))
-            draw_text('Stlač klávesu...', 'Arial', 20, position=(450, 40), color=(0,1,0,1))
+            draw_image(pic_loss_clone, position=(0, 0), anchor=(0, 0) )
         for event in poll_events():
             if type(event) is CloseEvent:
                 terminate()
@@ -288,6 +294,11 @@ def play():
         if state.item_counts[STAGE_STERILE] > 0:
             win(state)
             return
+
+        # fake win
+        if not state.saw_fake_easter_egg and state.money >= 47 and sum(state.item_counts) == 0:
+            win_fake(state)
+            state.saw_fake_easter_egg = True
 
         # level up
         for idx, stage in enumerate(STAGES):

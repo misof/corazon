@@ -16,9 +16,9 @@ STAGES.append( Stage(8, 8, 'naolejuj rikšu', 0, 1, False, 'Máš dosť peňazí
 STAGES.append( Stage(12, 9, 'lepšie prevody', 0, 1, False, 'Prenajmi si rikšu s lepšou prehadzovačkou.') )
 STAGES.append( Stage(20, 12, 'väčší vozík', 0, 3, False, 'S väčším vozíkom vieš doručiť viac tovaru.') )
 STAGES.append( Stage(100, 30, 'brigádnik', 0, 20, True, 'Zaplať brigádnika, čo bude šľapať namiesto teba.') )
-STAGES.append( Stage(250, 120, 'reklamné letáky', 0, 10, False, 'Letáková kampaň pritiahne viac zákazníkov.') )
-STAGES.append( Stage(10**15, 500, 'sterilný office', 0, 1, True, 'TVOJ SEN: v sterilnom office si netreba dezinfikovať ruky!') )
-STAGES.append( Stage(4000, 1000, 'motorikše', 0, 1, False, 'Vybav rikše pomocným motorom.') )
+STAGES.append( Stage(220, 110, 'reklamné letáky', 0, 10, False, 'Letáková kampaň pritiahne viac zákazníkov.') )
+STAGES.append( Stage(4000, 300, 'motorikše', 0, 1, False, 'Vybav rikše pomocným motorom.') )
+STAGES.append( Stage(10**15, 1000, 'sterilný bunker', 0, 1, True, 'TVOJ SEN: v sterilnom bunkri si netreba dezinfikovať ruky!') )
 STAGES.append( Stage(10000, 3000, 'dodávka', 0, 50, True, 'Investuj do svojej prvej dodávky.') )
 STAGES.append( Stage(18000, 9000, 'logistika', 0, 1, False, 'Logistické centrum naplánuje optimálnu cestu pre rozvoz.') )
 STAGES.append( Stage(22000, 11000, 'lepšie balenie', 0, 3, False, 'Vďaka úspornejšiemu baleniu obslúžime viac klientov jednou jazdou.') )
@@ -40,8 +40,8 @@ STAGE_GEARS = 2
 STAGE_BIGGER = 3
 STAGE_INTERN = 4
 STAGE_ADS = 5
-STAGE_STERILE = 6
-STAGE_MOTO = 7
+STAGE_MOTO = 6
+STAGE_STERILE = 7
 STAGE_VAN = 8
 STAGE_LOGISTICS = 9
 STAGE_PACKING = 10
@@ -68,6 +68,6 @@ MESSAGE_WELCOME = 'Vitaj!'
 MESSAGE_PICK_UP_GOODS = 'Choď do skladu po tovar!'
 MESSAGE_DELIVER_GOODS = 'Doruč tovar zákazníkovi!'
 MESSAGE_FIRST_BLOOD = 'Výborne, zarobil(a) si jedno euro.'
-MESSAGE_DISINFECT = 'Kliknutím na button vpravo hore si dezinfikuj ruky.'
-MESSAGE_DISINFECT_URGENT = 'Kliknutím na button vpravo hore si dezinfikuj ruky. Rýchlo!'
+MESSAGE_DISINFECT = 'Kliknutím na tlačidlo vpravo hore si dezinfikuj ruky.'
+MESSAGE_DISINFECT_URGENT = 'Kliknutím na tlačidlo vpravo hore si dezinfikuj ruky. Rýchlo!'
 
