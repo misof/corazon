@@ -12,6 +12,7 @@ from src.helper_functions import *
 from src.resources import *
 from src.screens import *
 
+from src.click import handle_left_click, handle_drag
 from src.draw import draw_current_screen
 
 from src.state import State

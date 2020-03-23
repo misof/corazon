@@ -17,7 +17,7 @@ def draw_money_textbox(state):
     draw_polygon( (200, SCREENY-34), (SCREENX-200, SCREENY-34), (SCREENX-200,SCREENY-10), (200,SCREENY-10), color=COLOR_LIGHTGRAY )
     draw_text( peniaze_message, 'Arial', 16, position=(204, SCREENY-30), color=COLOR_BLACK )
 
-def draw_disinfection_button(urgent=False):
+def draw_disinfection_button(urgent = False):
     draw_polygon( (SCREENX-180, SCREENY-34), (SCREENX-10, SCREENY-34), (SCREENX-10,SCREENY-10), (SCREENX-180,SCREENY-10), color=COLOR_BLACK )
     draw_polygon( (SCREENX-179, SCREENY-33), (SCREENX-11, SCREENY-33), (SCREENX-11,SCREENY-11), (SCREENX-179,SCREENY-11), color=COLOR_URGENT_BG if urgent else COLOR_LIGHTGRAY )
     draw_text('Dezinfikuj si ruky', 'Arial', 16, position=(SCREENX-176, SCREENY-30), color=COLOR_URGENT_FG if urgent else COLOR_BLACK )
@@ -101,13 +101,7 @@ def draw_stage_menu(state):
 def draw_current_screen(state):
     draw_image(pic_background, position=(0, 0), anchor=(0, 0), scale_x=1.01, scale_y=1.01)
     draw_image(pic_sklad, position=WAREHOUSE_POS)
-    draw_status_message(state.current_status_message)
-    draw_money_textbox(state)
     
-    current_time = time.time()
-    if current_time > state.last_disinfection + DISINF_APPEAR:
-        draw_disinfection_button(current_time > state.last_disinfection + DISINF_URGENT)
-
     if state.is_player_active():
         for house in state.player.pending_houses: draw_image(pic_dom, position=house)
         draw_image(state.player.get_picture(), position=state.player.position, scale_x=-1 if state.player.last_movement_was_left else 1)
@@ -116,6 +110,12 @@ def draw_current_screen(state):
         draw_workers(state)
 
     draw_stage_menu(state)
+    draw_status_message(state.current_status_message)
+    draw_money_textbox(state)
+
+    current_time = time.time()
+    if current_time > state.last_disinfection + DISINF_APPEAR:
+        draw_disinfection_button(current_time > state.last_disinfection + DISINF_URGENT)
 
     if state.item_counts[STAGE_CLONE] == 1:
         if state.saved_clone is None:

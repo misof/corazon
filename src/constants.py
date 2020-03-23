@@ -74,7 +74,7 @@ MESSAGE_DISINFECT_URGENT = 'Kliknutím na tlačidlo vpravo hore si dezinfikuj ru
 COLOR_BLACK = (0, 0, 0, 1)
 COLOR_DISABLED = (0.7, 0.7, 0.7, 1)
 COLOR_LIGHTGRAY = (0.9, 0.9, 0.9, 1)
-COLOR_URGENT_BG = (0.9, 0.9, 0.9, 1)
+COLOR_URGENT_BG = (0.9, 0.8, 0.8, 1)
 COLOR_URGENT_FG = (1, 0.1, 0.1, 1)
 COLOR_WHITE = (1, 1, 1, 1)
 
