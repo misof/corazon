@@ -1,8 +1,11 @@
-import itertools, math, sys
-from easygame import *
-from constants import *
+import itertools
+import math
+import sys
 
-def formatuj_cislo(cislo, force=False):
+from src.easygame import *
+from src.constants import *
+
+def scientific_format(cislo, force=False):
     sufixy = [ '', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y' ]
     exponent = 0
     while exponent+1 < len(sufixy) and (cislo % 1000 == 0 or (force and cislo >= 1000)):
@@ -35,6 +38,8 @@ def optimize_order(seq):
 def stages_in_menu(state):
     candidates = list( range(1, state.stage+1) )
     candidates = [ ( STAGES[c].cost, c ) for c in candidates if state.item_counts[c] < STAGES[c].upper_bound or STAGES[c].can_sell ]
-    while len(candidates) > 8: candidates.remove( min(candidates) )
+    candidates.sort()
+    if len(candidates) > 8: candidates = candidates[-8:]
+    # while len(candidates) > 8: candidates.remove( min(candidates) )
     return [ c[1] for c in candidates ]
 

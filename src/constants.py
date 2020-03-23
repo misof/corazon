@@ -1,4 +1,4 @@
-from stage import Stage
+from src.stage import Stage
 
 SCREEN = (800, 600)
 SCREENX, SCREENY = SCREEN
@@ -70,4 +70,11 @@ MESSAGE_DELIVER_GOODS = 'Doruč tovar zákazníkovi!'
 MESSAGE_FIRST_BLOOD = 'Výborne, zarobil(a) si jedno euro.'
 MESSAGE_DISINFECT = 'Kliknutím na tlačidlo vpravo hore si dezinfikuj ruky.'
 MESSAGE_DISINFECT_URGENT = 'Kliknutím na tlačidlo vpravo hore si dezinfikuj ruky. Rýchlo!'
+
+COLOR_BLACK = (0, 0, 0, 1)
+COLOR_DISABLED = (0.7, 0.7, 0.7, 1)
+COLOR_LIGHTGRAY = (0.9, 0.9, 0.9, 1)
+COLOR_URGENT_BG = (0.9, 0.9, 0.9, 1)
+COLOR_URGENT_FG = (1, 0.1, 0.1, 1)
+COLOR_WHITE = (1, 1, 1, 1)
 

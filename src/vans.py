@@ -1,6 +1,6 @@
-from constants import *
-from resources import *
-from worker import Worker
+from src.constants import *
+from src.resources import *
+from src.worker import Worker
 
 class Van(Worker):
     def __init__(self):

@@ -1,6 +1,7 @@
 import random
-from constants import *
-from worker import Worker
+
+from src.constants import *
+from src.worker import Worker
 
 class Replicator(Worker):
     def __init__(self):

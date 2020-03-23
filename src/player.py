@@ -1,6 +1,7 @@
 import random
-from constants import *
-from interns import Intern
+
+from src.constants import *
+from src.interns import Intern
 
 class Player(Intern):
     def __init__(self):

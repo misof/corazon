@@ -1,6 +1,9 @@
-import math, random, time
-from constants import *
-from helper_functions import *
+import math
+import random
+import time
+
+from src.constants import *
+from src.helper_functions import *
 
 class Worker:
     def __init__(self):

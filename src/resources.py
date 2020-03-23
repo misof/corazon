@@ -1,4 +1,4 @@
-from easygame import *
+from src.easygame import *
 
 pic_background = load_image('resources/background.png')
 pic_dom = load_image('resources/dom.png')
