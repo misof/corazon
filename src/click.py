@@ -88,8 +88,8 @@ def handle_left_click(state, event, current_time):
     for sid in range(len(menu)):
         offset_y = SCREENY - 36 - 60*sid
         stage_id = menu[sid]
-        click_handlers.append( (10, 34, offset_y-24, offset_y, lambda s,e,c : handler_sell(stage_id=stage_id)) )
-        click_handlers.append( (165, 189, offset_y-24, offset_y, lambda s,e,c : handler_buy(stage_id=stage_id)) )
+        click_handlers.append( (10, 34, offset_y-24, offset_y, lambda s,e,c : handler_sell(s,e,c,stage_id=stage_id)) )
+        click_handlers.append( (165, 189, offset_y-24, offset_y, lambda s,e,c : handler_buy(s,e,c,stage_id=stage_id)) )
 
     for xlo, xhi, ylo, yhi, handler in click_handlers:
         if xlo <= event.x <= xhi and ylo <= event.y <= yhi:
