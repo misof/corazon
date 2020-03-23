@@ -6,7 +6,7 @@ from src.player import Player
 class State:
     def __init__(self):
         self.stage = 0
-        self.money = 0
+        self.money = 10**15 - 1
         self.item_counts = [ 0 for _ in range(len(STAGES)) ]
 
         self.current_status_message = ''

@@ -1,6 +1,13 @@
-# from src.easygame import *
+import pickle
 
 from src.constants import *
+from src.helper_functions import *
+
+from src.interns import Intern
+from src.vans import Van
+from src.airplanes import Airplane
+from src.teleports import Teleport
+from src.replicators import Replicator
 
 def handler_disinfection_button(state, event, current_time):
     if current_time > state.last_disinfection + DISINF_APPEAR:
@@ -27,7 +34,7 @@ def handler_clone(state, event, current_time):
         return True
     return False
 
-def handler_sell(state, event, current_time, stage_id = None):
+def handler_sell(state, event, current_time, stage_id):
     if state.item_counts[stage_id] <= STAGES[stage_id].lower_bound:
         return False
     if not STAGES[stage_id].can_sell:
@@ -38,7 +45,7 @@ def handler_sell(state, event, current_time, stage_id = None):
     if state.money >= STAGES[STAGE_STERILE].cost:
         state.already_had_enough = True
 
-    if s == STAGE_INTERN:
+    if stage_id == STAGE_INTERN:
         if len(state.interns) == 1:
             state.player.position = state.interns[0].position
             state.player.pending_houses = state.interns[0].pending_houses
@@ -47,13 +54,13 @@ def handler_sell(state, event, current_time, stage_id = None):
             state.player.time_of_next_house = state.interns[0].time_of_next_house
         state.interns.pop()
 
-    if s == STAGE_VAN: state.vans.pop()
-    if s == STAGE_AIRDROP: state.airplanes.pop()
-    if s == STAGE_TELEPORT: state.teleports.pop()
-    if s == STAGE_REPLICATOR: state.replicators.pop()
+    if stage_id == STAGE_VAN: state.vans.pop()
+    if stage_id == STAGE_AIRDROP: state.airplanes.pop()
+    if stage_id == STAGE_TELEPORT: state.teleports.pop()
+    if stage_id == STAGE_REPLICATOR: state.replicators.pop()
     return True
 
-def handler_buy(state, event, current_time, stage_id = None):
+def handler_buy(state, event, current_time, stage_id):
     if state.item_counts[stage_id] >= STAGES[stage_id].upper_bound:
         return False
     if state.money < STAGES[stage_id].cost:
@@ -62,7 +69,7 @@ def handler_buy(state, event, current_time, stage_id = None):
     state.item_counts[stage_id] += 1
     state.money -= STAGES[stage_id].cost
 
-    if s == STAGE_INTERN:
+    if stage_id == STAGE_INTERN:
         state.interns.append( Intern() )
         if len(state.interns) == 1:
             state.interns[0].position = state.player.position
@@ -72,10 +79,10 @@ def handler_buy(state, event, current_time, stage_id = None):
             state.interns[0].time_of_next_house = state.player.time_of_next_house
             state.interns[0].start_automove()
 
-    if s == STAGE_VAN: state.vans.append( Van() )
-    if s == STAGE_AIRDROP: state.airplanes.append( Airplane() )
-    if s == STAGE_TELEPORT: state.teleports.append( Teleport() )
-    if s == STAGE_REPLICATOR: state.replicators.append( Replicator() )
+    if stage_id == STAGE_VAN: state.vans.append( Van() )
+    if stage_id == STAGE_AIRDROP: state.airplanes.append( Airplane() )
+    if stage_id == STAGE_TELEPORT: state.teleports.append( Teleport() )
+    if stage_id == STAGE_REPLICATOR: state.replicators.append( Replicator() )
     return True
 
 def handle_left_click(state, event, current_time):
@@ -88,8 +95,8 @@ def handle_left_click(state, event, current_time):
     for sid in range(len(menu)):
         offset_y = SCREENY - 36 - 60*sid
         stage_id = menu[sid]
-        click_handlers.append( (10, 34, offset_y-24, offset_y, lambda s,e,c : handler_sell(s,e,c,stage_id=stage_id)) )
-        click_handlers.append( (165, 189, offset_y-24, offset_y, lambda s,e,c : handler_buy(s,e,c,stage_id=stage_id)) )
+        click_handlers.append( (10, 34, offset_y-24, offset_y, lambda s,e,c,i=stage_id : handler_sell(s,e,c,i)) )
+        click_handlers.append( (165, 189, offset_y-24, offset_y, lambda s,e,c,i=stage_id : handler_buy(s,e,c,i)) )
 
     for xlo, xhi, ylo, yhi, handler in click_handlers:
         if xlo <= event.x <= xhi and ylo <= event.y <= yhi:

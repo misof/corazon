@@ -1,3 +1,5 @@
+import hashlib
+
 from src.easygame import *
 
 from src.constants import *
