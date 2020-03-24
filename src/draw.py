@@ -99,7 +99,8 @@ def draw_stage_menu(state):
         draw_text( str(state.item_counts[stage_id]), 'Arial', 12, position=(40,offset_y-44), color=COLOR_BLACK )
 
 def draw_current_screen(state):
-    draw_image(pic_background, position=(0, 0), anchor=(0, 0), scale_x=1.01, scale_y=1.01)
+    # draw_image(pic_background, position=(0, 0), anchor=(0, 0), scale_x=1.01, scale_y=1.01)
+    draw_image(pic_background, position=(0, 0), anchor=(0, 0) )
     draw_image(pic_sklad, position=WAREHOUSE_POS)
     
     if state.is_player_active():

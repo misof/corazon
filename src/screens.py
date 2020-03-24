@@ -47,6 +47,62 @@ def loss(state):
             if type(event) is KeyDownEvent:
                 return
 
+def pause_screen(state):
+    while True:
+        next_frame()
+        draw_image(pic_pause, position=(0, 0), anchor=(0, 0) )
+        for event in poll_events():
+            if type(event) is CloseEvent:
+                terminate()
+            if type(event) is KeyDownEvent:
+                return
+
+def report(state):
+    while True:
+        next_frame()
+        draw_image(pic_report, position=(0, 0), anchor=(0, 0) )
+
+        offset_y, step_y = 270, 26
+        
+        seconds = int(state.game_duration)
+        hours = seconds // 3600
+        seconds %= 3600
+        minutes = seconds // 60
+        seconds %= 60
+        duration = 'Celkové trvanie hry: {}:{:02d}:{:02d}'.format(hours,minutes,seconds)
+        draw_text(duration, 'Arial', 16, position=(50,offset_y), color=COLOR_BLACK)
+        offset_y -= step_y
+
+        disinfections = 'Počet dezinfekcií rúk: {}'.format(state.disinfections)
+        draw_text(disinfections, 'Arial', 16, position=(50,offset_y), color=COLOR_BLACK)
+        offset_y -= step_y
+
+        if state.stage >= STAGE_CLONE:
+            clonings = 'Počet potrebných naklonovaní: {}'.format(state.clonings)
+            draw_text(clonings, 'Arial', 16, position=(50,offset_y), color=COLOR_BLACK)
+            offset_y -= step_y
+        else:
+            clonings = 'Počet (ešte nevieš čoho): {}'.format(state.clonings)
+            draw_text(clonings, 'Arial', 16, position=(50,offset_y), color=COLOR_BLACK)
+            offset_y -= step_y
+
+        offset_y -= step_y
+
+        draw_text('BONUSY:', 'Arial', 16, position=(50,offset_y), color=COLOR_BLACK)
+        offset_y -= step_y
+        
+        draw_text('Biela čokoláda: ' + ('získaná' if state.saw_fake_easter_egg else 'nezískaná'), 'Arial', 16, position=(50,offset_y), color=COLOR_BLACK)
+        offset_y -= step_y
+        
+        draw_text('Čokoláda: ' + ('získaná' if state.should_win_pro else 'nezískaná'), 'Arial', 16, position=(50,offset_y), color=COLOR_BLACK)
+        offset_y -= step_y
+        
+        for event in poll_events():
+            if type(event) is CloseEvent:
+                terminate()
+            if type(event) is KeyDownEvent:
+                return
+
 def win(state):
     while True:
         next_frame()

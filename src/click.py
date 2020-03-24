@@ -13,6 +13,7 @@ def handler_disinfection_button(state, event, current_time):
     if current_time > state.last_disinfection + DISINF_APPEAR:
         state.last_disinfection = current_time
         state.seen_disinfection_button = True
+        state.disinfections += 1
         return True
     return False
 

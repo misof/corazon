@@ -28,12 +28,16 @@ def play():
 
         # win
         if state.item_counts[STAGE_STERILE] > 0:
+            state.pause()
             win(state)
+            report(state)
             return
 
         # fake win
-        if not state.saw_fake_easter_egg and state.money >= 47 and sum(state.item_counts) == 0:
+        if not state.saw_fake_easter_egg and state.money >= 21 and sum(state.item_counts) == 0:
+            state.pause()
             win_fake(state)
+            state.unpause()
             state.saw_fake_easter_egg = True
 
         # level up
@@ -43,14 +47,26 @@ def play():
 
         # potreba dezinfekcie a mozna smrt
         if current_time > state.last_disinfection + DISINF_DEAD:
+            state.pause()
             loss(state)
             if state.saved_clone is None:
+                report(state)
                 return
             else:
                 saved_state = pickle.loads(state.saved_clone)
-                state = saved_state
+                
                 current_time = time.time()
+                
+                saved_state.game_start_timestamp = current_time
+                saved_state.game_duration = state.game_duration
+                saved_state.paused = True
+                saved_state.pause_timestamp = state.pause_timestamp
+                saved_state.disinfections = state.disinfections
+                saved_state.clonings += 1
+
+                state = saved_state
                 state.last_disinfection = current_time
+                state.unpause()
 
         # automaticky pohyb internov a vanov
         for worker in state.get_all_workers():
@@ -79,6 +95,10 @@ def play():
                 handle_drag(state, event, current_time)
             if type(event) == MouseUpEvent:
                 state.player.moving = False
+            if type(event) is KeyDownEvent:
+                state.pause()
+                pause_screen(state)
+                state.unpause()
 
 if __name__ == '__main__':
     open_window('Corazón', SCREENX, SCREENY)

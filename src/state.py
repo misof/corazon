@@ -27,6 +27,33 @@ class State:
 
         self.saved_clone = None
 
+        self.game_start_timestamp = time.time()
+        self.game_duration = 0
+        self.paused = False
+        self.pause_timestamp = None
+
+        self.disinfections = 0
+        self.clonings = 0
+
+    def pause(self):
+        current_time = time.time()
+        self.game_duration += current_time - self.game_start_timestamp
+        self.paused = True
+        self.pause_timestamp = current_time
+
+    def unpause(self):
+        current_time = time.time()
+
+        # shift stuff around in time
+        self.last_disinfection += (current_time - self.pause_timestamp)
+        for worker in self.get_all_workers() + [self.player]:
+            if worker.moving_start_time is not None: worker.moving_start_time += (current_time - self.pause_timestamp)
+            worker.time_of_next_house += (current_time - self.pause_timestamp)
+
+        self.game_start_timestamp = current_time
+        self.paused = False
+        self.pause_timestamp = None
+
     def get_all_workers(self):
         return self.interns + self.vans + self.airplanes + self.teleports + self.replicators
 

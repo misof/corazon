@@ -24,7 +24,7 @@ STAGES.append( Stage(18000, 9000, 'logistika', 0, 1, False, 'Logistické centrum
 STAGES.append( Stage(22000, 11000, 'lepšie balenie', 0, 3, False, 'Vďaka úspornejšiemu baleniu obslúžime viac klientov jednou jazdou.') )
 STAGES.append( Stage(120000, 30000, 'airdrop', 0, 20, True, 'Zhadzuj tovar z lietadla.') )
 STAGES.append( Stage(450000, 95000, 'palivové nádrže', 0, 5, False, 'Udrž lietadlá dlhšie vo vzduchu.') )
-STAGES.append( Stage(15 * 10**6, 500000, 'klonovanie', 0, 1, False, 'Preži aj smrť vďaka klonovacím technológiám.') )
+STAGES.append( Stage(15 * 10**6, 500000, 'klonovanie', 0, 1, False, 'Preži aj smrť vďaka klonovacím technológiám: reloadneme tvoj klon ak umrieš.') )
 STAGES.append( Stage(30 * 10**6, 14 * 10**6, 'miniaturizácia', 0, 1, False, 'Miniaturizovaného tovaru sa dá doručiť viac.') )
 STAGES.append( Stage(25 * 10**7, 25 * 10**6, 'teleport', 0, 7, True, 'Teleportuj tovar ľuďom do domov.') )
 STAGES.append( Stage(10**9, 2 * 10**8, 'zrýchli teleport', 0, 5, False, '') )
