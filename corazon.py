@@ -96,9 +96,10 @@ def play():
             if type(event) == MouseUpEvent:
                 state.player.moving = False
             if type(event) is KeyDownEvent:
-                state.pause()
-                pause_screen(state)
-                state.unpause()
+                if event.key != 'ESCAPE':
+                    state.pause()
+                    pause_screen(state)
+                    state.unpause()
 
 if __name__ == '__main__':
     open_window('Corazón', SCREENX, SCREENY)

@@ -1,6 +1,7 @@
 from src.easygame import *
 
 pic_background = load_image('resources/background.png')
+pic_black = load_image('resources/black.png')
 pic_dom = load_image('resources/dom.png')
 pic_init_screen_nocont = load_image('resources/init_screen_nocont.png')
 pic_init_screen = load_image('resources/init_screen.png')
