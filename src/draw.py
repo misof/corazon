@@ -35,11 +35,11 @@ def get_opacities(state):
     replicator_opacity = 1
 
     if state.vans != []: intern_opacity = 0.2
-    if state.airplanes != []: van_opacity, intern_opacity = 0.07, 0.15
-    if state.teleports != []: van_opacity, intern_opacity, airplane_opacity = 0.07, 0.15, 0.15
-    if state.replicators != []: van_opacity, intern_opacity, airplane_opacity, teleport_opacity = 0.07, 0.15, 0.15, 0.5
+    if state.airplanes != []: intern_opacity, van_opacity = 0.15, 0.07
+    if state.teleports != []: intern_opacity, van_opacity, airplane_opacity = 0.15, 0.07, 0.15
+    if state.replicators != []: intern_opacity, van_opacity, airplane_opacity, teleport_opacity = 0.15, 0.07, 0.15, 0.5
 
-    return list([ van_opacity, intern_opacity, airplane_opacity, teleport_opacity, replicator_opacity ])
+    return list([ intern_opacity, van_opacity, airplane_opacity, teleport_opacity, replicator_opacity ])
 
 def draw_houses(state):
     worker_groups = [ state.interns, state.vans, state.airplanes, state.teleports, state.replicators ]
@@ -53,7 +53,7 @@ def draw_houses(state):
                 draw_image( pic, position=house, opacity=opacity )
 
 def draw_workers(state):
-    van_opacity, intern_opacity, airplane_opacity, teleport_opacity, replicator_opacity = get_opacities(state)
+    intern_opacity, van_opacity, airplane_opacity, teleport_opacity, replicator_opacity = get_opacities(state)
 
     for worker in state.interns:
         draw_image(worker.get_picture(), position=worker.position, opacity=intern_opacity, scale_x=-1 if worker.last_movement_was_left else 1)
